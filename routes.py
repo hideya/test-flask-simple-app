@@ -30,6 +30,18 @@ def register():
     
     form = RegistrationForm()
     if form.validate_on_submit():
+        # Check if username already exists
+        existing_user = User.query.filter_by(username=form.username.data).first()
+        if existing_user:
+            flash('Username already exists. Please choose a different username.', 'danger')
+            return render_template('register.html', form=form)
+            
+        # Check if email already exists
+        existing_email = User.query.filter_by(email=form.email.data).first()
+        if existing_email:
+            flash('Email already registered. Please use a different email.', 'danger')
+            return render_template('register.html', form=form)
+            
         user = User(
             username=form.username.data,
             email=form.email.data,
@@ -48,8 +60,8 @@ def register():
             return redirect(url_for('login'))
         except Exception as e:
             db.session.rollback()
-            flash('Registration failed. Please try again.', 'danger')
             logging.error(f"Registration error: {str(e)}")
+            flash('An unexpected error occurred. Please try again.', 'danger')
     
     return render_template('register.html', form=form)
 
