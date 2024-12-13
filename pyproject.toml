@@ -12,4 +12,5 @@ dependencies = [
     "psycopg2-binary",
     "email-validator",
     "flask-sqlalchemy",
+    "python-dotenv>=1.0.0",
 ]
