@@ -1,10 +1,3 @@
-
-[tool.poetry]
-name = "repl-nix-workspace"
-version = "0.1.0"
-description = "Flask Memo Application"
-authors = ["Replit User"]
-
 [project]
 name = "repl-nix-workspace"
 version = "0.1.0"

@@ -4,9 +4,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
-# Load environment variables from .env file if it exists
-if os.path.exists('.env'):
-    load_dotenv()
+# Load environment variables
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
