@@ -39,3 +39,13 @@ A secure web application that allows users to create and manage personal memos. 
 - Session management
 - CSRF protection
 - Secure database operations
+
+## Environment Variables
+
+The application uses the following environment variables for configuration:
+
+- `PORT`: Server port (default: 5001)
+- `SECRET_KEY`: Flask session security key (auto-generated if not set)
+- `DATABASE_URL`: Database connection URL for SQLAlchemy
+
+These can be configured using Replit's Secrets tool.
