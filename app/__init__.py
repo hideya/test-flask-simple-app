@@ -20,11 +20,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize extensions
 db = SQLAlchemy(app)
 
-try:
-    db.engine.connect()
-    logger.info("Database connection successful")
-except Exception as e:
-    logger.error(f"Database connection failed: {str(e)}")
-    raise
+with app.app_context():
+    try:
+        db.engine.connect()
+        logger.info("Database connection successful")
+    except Exception as e:
+        logger.error(f"Database connection failed: {str(e)}")
+        raise
 
 logger.info("Flask app and SQLAlchemy initialized successfully")
