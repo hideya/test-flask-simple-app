@@ -12,11 +12,13 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-logging.basicConfig(level=logging.DEBUG)
-
 @login_manager.user_loader
 def load_user(id):
-    return db.session.get(User, int(id))
+    try:
+        return db.session.get(User, int(id))
+    except Exception as e:
+        logging.error(f"Error loading user: {str(e)}")
+        return None
 
 @app.route('/')
 def index():
@@ -28,23 +30,17 @@ def index():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('memo'))
-    
+
     form = RegistrationForm()
     if form.validate_on_submit():
         try:
-            logging.info(f"Attempting to register user with username: {form.username.data}")
-            
             # Check if username already exists
-            existing_user = User.query.filter_by(username=form.username.data).first()
-            if existing_user:
-                logging.warning(f"Username {form.username.data} already exists")
+            if User.query.filter_by(username=form.username.data).first():
                 flash('Username already exists. Please choose a different username.', 'danger')
                 return render_template('register.html', form=form)
             
             # Check if email already exists
-            existing_email = User.query.filter_by(email=form.email.data).first()
-            if existing_email:
-                logging.warning(f"Email {form.email.data} already registered")
+            if User.query.filter_by(email=form.email.data).first():
                 flash('Email already registered. Please use a different email.', 'danger')
                 return render_template('register.html', form=form)
             
@@ -55,18 +51,18 @@ def register():
                 password_hash=generate_password_hash(form.password.data)
             )
             
-            # First commit the user
+            # Add and flush to get the user ID
             db.session.add(user)
-            db.session.flush()  # This gets the user.id without committing
+            db.session.flush()
             
-            # Create memo
+            # Create empty memo for the user
             memo = Memo(user_id=user.id, content="")
             db.session.add(memo)
             
-            # Commit both user and memo in one transaction
+            # Commit the transaction
             db.session.commit()
-            logging.info(f"Successfully registered user: {user.username}")
-            flash('Registration successful!', 'success')
+            
+            flash('Registration successful! Please login.', 'success')
             return redirect(url_for('login'))
             
         except Exception as e:
@@ -83,38 +79,56 @@ def login():
     
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and check_password_hash(user.password_hash, form.password.data):
-            login_user(user)
-            return redirect(url_for('memo'))
-        flash('Invalid username or password', 'danger')
+        try:
+            user = User.query.filter_by(username=form.username.data).first()
+            if user and check_password_hash(user.password_hash, form.password.data):
+                login_user(user)
+                return redirect(url_for('memo'))
+            flash('Invalid username or password', 'danger')
+        except Exception as e:
+            logging.error(f"Login error: {str(e)}")
+            flash('An error occurred during login. Please try again.', 'danger')
     
     return render_template('login.html', form=form)
 
 @app.route('/logout')
 @login_required
 def logout():
-    logout_user()
-    return redirect(url_for('login'))
+    try:
+        logout_user()
+        return redirect(url_for('login'))
+    except Exception as e:
+        logging.error(f"Logout error: {str(e)}")
+        flash('An error occurred during logout.', 'danger')
+        return redirect(url_for('memo'))
 
 @app.route('/memo', methods=['GET'])
 @login_required
 def memo():
-    user_memo = current_user.memo
-    if not user_memo:
-        user_memo = Memo(user_id=current_user.id, content="")
-        db.session.add(user_memo)
-        db.session.commit()
-    return render_template('memo.html', memo=user_memo)
+    try:
+        user_memo = current_user.memo
+        if not user_memo:
+            user_memo = Memo(user_id=current_user.id, content="")
+            db.session.add(user_memo)
+            db.session.commit()
+        return render_template('memo.html', memo=user_memo)
+    except Exception as e:
+        logging.error(f"Error accessing memo: {str(e)}")
+        flash('An error occurred while loading your memo.', 'danger')
+        return redirect(url_for('index'))
 
 @app.route('/api/save-memo', methods=['POST'])
 @login_required
 def save_memo():
-    content = request.json.get('content')
-    if content is not None:
-        memo = current_user.memo
-        memo.content = content
-        memo.last_modified = datetime.utcnow()
-        db.session.commit()
-        return jsonify({'status': 'success'})
-    return jsonify({'status': 'error'}), 400
+    try:
+        content = request.json.get('content')
+        if content is not None:
+            memo = current_user.memo
+            memo.content = content
+            memo.last_modified = datetime.utcnow()
+            db.session.commit()
+            return jsonify({'status': 'success'})
+        return jsonify({'status': 'error', 'message': 'No content provided'}), 400
+    except Exception as e:
+        logging.error(f"Error saving memo: {str(e)}")
+        return jsonify({'status': 'error', 'message': 'Failed to save memo'}), 500
