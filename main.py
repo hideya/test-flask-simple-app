@@ -1,9 +1,6 @@
-
 import logging
 import os
-from app.__init__ import app, db
-from app.models import User, Memo
-import app.routes
+from app import app, db
 
 # Configure logging
 logging.basicConfig(
@@ -11,7 +8,10 @@ logging.basicConfig(
     format='%(asctime)s %(levelname)s: %(message)s'
 )
 
-
+# Import models first
+from models import User, Memo
+# Then import routes which use the models
+import routes
 
 def init_db():
     """Initialize the database and create tables"""
