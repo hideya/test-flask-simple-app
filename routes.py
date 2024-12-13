@@ -35,12 +35,14 @@ def register():
             email=form.email.data,
             password_hash=generate_password_hash(form.password.data)
         )
-        db.session.add(user)
-        # Create empty memo for new user
-        memo = Memo(user_id=user.id, content="")
-        db.session.add(memo)
-        
         try:
+            # First commit the user to get their ID
+            db.session.add(user)
+            db.session.commit()
+            
+            # Now create memo with the user ID
+            memo = Memo(user_id=user.id, content="")
+            db.session.add(memo)
             db.session.commit()
             flash('Registration successful!', 'success')
             return redirect(url_for('login'))
