@@ -1,4 +1,5 @@
 from flask import render_template, redirect, url_for, flash, request, jsonify
+from datetime import datetime
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import app, db
@@ -30,38 +31,48 @@ def register():
     
     form = RegistrationForm()
     if form.validate_on_submit():
-        # Check if username already exists
-        existing_user = User.query.filter_by(username=form.username.data).first()
-        if existing_user:
-            flash('Username already exists. Please choose a different username.', 'danger')
-            return render_template('register.html', form=form)
-            
-        # Check if email already exists
-        existing_email = User.query.filter_by(email=form.email.data).first()
-        if existing_email:
-            flash('Email already registered. Please use a different email.', 'danger')
-            return render_template('register.html', form=form)
-            
-        user = User(
-            username=form.username.data,
-            email=form.email.data,
-            password_hash=generate_password_hash(form.password.data)
-        )
         try:
-            # First commit the user to get their ID
-            db.session.add(user)
-            db.session.commit()
+            logging.info(f"Attempting to register user with username: {form.username.data}")
             
-            # Now create memo with the user ID
+            # Check if username already exists
+            existing_user = User.query.filter_by(username=form.username.data).first()
+            if existing_user:
+                logging.warning(f"Username {form.username.data} already exists")
+                flash('Username already exists. Please choose a different username.', 'danger')
+                return render_template('register.html', form=form)
+            
+            # Check if email already exists
+            existing_email = User.query.filter_by(email=form.email.data).first()
+            if existing_email:
+                logging.warning(f"Email {form.email.data} already registered")
+                flash('Email already registered. Please use a different email.', 'danger')
+                return render_template('register.html', form=form)
+            
+            # Create new user
+            user = User(
+                username=form.username.data,
+                email=form.email.data,
+                password_hash=generate_password_hash(form.password.data)
+            )
+            
+            # First commit the user
+            db.session.add(user)
+            db.session.flush()  # This gets the user.id without committing
+            
+            # Create memo
             memo = Memo(user_id=user.id, content="")
             db.session.add(memo)
+            
+            # Commit both user and memo in one transaction
             db.session.commit()
+            logging.info(f"Successfully registered user: {user.username}")
             flash('Registration successful!', 'success')
             return redirect(url_for('login'))
+            
         except Exception as e:
             db.session.rollback()
             logging.error(f"Registration error: {str(e)}")
-            flash('An unexpected error occurred. Please try again.', 'danger')
+            flash('Registration failed. Please try again.', 'danger')
     
     return render_template('register.html', form=form)
 
