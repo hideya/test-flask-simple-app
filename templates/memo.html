@@ -2,14 +2,24 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-12">
-        <div class="card">
+    <div class="col-md-6">
+        <div class="card h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">My Memo</h4>
+                <h4 class="mb-0">Editor</h4>
                 <small id="save-status" class="text-muted">All changes saved</small>
             </div>
             <div class="card-body">
-                <textarea id="memo-content" class="form-control" rows="20">{{ memo.content }}</textarea>
+                <textarea id="memo-content" class="form-control" rows="20" placeholder="Write your memo in Markdown...">{{ memo.content }}</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h4 class="mb-0">Preview</h4>
+            </div>
+            <div class="card-body">
+                <div id="preview" class="markdown-body"></div>
             </div>
         </div>
     </div>
@@ -17,5 +27,26 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ url_for('static', filename='js/memo.js') }}"></script>
+<style>
+.markdown-body {
+    padding: 1rem;
+    min-height: 500px;
+}
+.markdown-body img {
+    max-width: 100%;
+}
+.markdown-body pre {
+    background-color: var(--bs-dark);
+    padding: 1rem;
+    border-radius: 0.375rem;
+}
+.markdown-body code {
+    color: var(--bs-info);
+    background-color: var(--bs-dark);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+}
+</style>
 {% endblock %}

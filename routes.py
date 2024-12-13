@@ -6,6 +6,7 @@ from app import app, db
 from models import User, Memo
 from forms import LoginForm, RegistrationForm
 import logging
+import markdown
 
 # Setup Flask-Login
 login_manager = LoginManager()
@@ -105,7 +106,8 @@ def memo():
         user_memo = Memo(user_id=current_user.id, content="")
         db.session.add(user_memo)
         db.session.commit()
-    return render_template('memo.html', memo=user_memo)
+    html_content = markdown.markdown(user_memo.content) if user_memo.content else ""
+    return render_template('memo.html', memo=user_memo, html_content=html_content)
 
 @app.route('/api/save-memo', methods=['POST'])
 @login_required

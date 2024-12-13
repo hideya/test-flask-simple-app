@@ -12,4 +12,5 @@ dependencies = [
     "psycopg2-binary",
     "email-validator",
     "flask-sqlalchemy",
+    "markdown>=3.7",
 ]
