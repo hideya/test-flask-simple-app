@@ -38,5 +38,6 @@ memoContent.addEventListener('input', () => {
     saveTimeout = setTimeout(saveMemo, 1000);
 });
 
-// Initial focus
+// Initial focus and move cursor to end
 memoContent.focus();
+memoContent.setSelectionRange(memoContent.value.length, memoContent.value.length);
