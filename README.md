@@ -49,6 +49,7 @@ Required:
 Optional:
 - `PORT`: Server port (default: 5001)
 - `SECRET_KEY`: Flask session security key (default: auto-generated)
+- `DEBUG`: Enable debug mode (default: True)
 
 ### Configuration Methods
 
