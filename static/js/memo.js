@@ -1,18 +1,10 @@
 let saveTimeout;
 const saveStatus = document.getElementById('save-status');
 const memoContent = document.getElementById('memo-content');
-const previewContent = document.getElementById('preview-content');
-const previewTab = document.getElementById('preview-tab');
 
 function updateSaveStatus(message, isError = false) {
     saveStatus.textContent = message;
     saveStatus.className = isError ? 'text-danger' : 'text-muted';
-}
-
-function updatePreview() {
-    if (previewContent) {
-        previewContent.innerHTML = marked.parse(memoContent.value);
-    }
 }
 
 function saveMemo() {
@@ -42,14 +34,9 @@ function saveMemo() {
 
 memoContent.addEventListener('input', () => {
     updateSaveStatus('Unsaved changes...');
-    updatePreview();
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(saveMemo, 1000);
 });
 
-// Update preview when switching to preview tab
-previewTab.addEventListener('shown.bs.tab', updatePreview);
-
-// Initial preview update and focus
-updatePreview();
+// Initial focus
 memoContent.focus();
