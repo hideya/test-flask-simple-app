@@ -1,6 +1,12 @@
 let saveTimeout;
 const saveStatus = document.getElementById('save-status');
 const memoContent = document.getElementById('memo-content');
+const preview = document.getElementById('preview');
+
+function updatePreview() {
+    const content = memoContent.value;
+    preview.innerHTML = marked.parse(content);
+}
 
 function updateSaveStatus(message, isError = false) {
     saveStatus.textContent = message;
@@ -34,9 +40,11 @@ function saveMemo() {
 
 memoContent.addEventListener('input', () => {
     updateSaveStatus('Unsaved changes...');
+    updatePreview();
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(saveMemo, 1000);
 });
 
-// Initial focus
+// Initial preview and focus
+updatePreview();
 memoContent.focus();

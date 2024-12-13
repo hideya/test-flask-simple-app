@@ -2,14 +2,24 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-12">
+    <div class="col-12 mb-3">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">My Memo</h4>
                 <small id="save-status" class="text-muted">All changes saved</small>
             </div>
             <div class="card-body">
-                <textarea id="memo-content" class="form-control" rows="20">{{ memo.content }}</textarea>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Edit (Markdown)</h5>
+                        <textarea id="memo-content" class="form-control" rows="20" style="font-family: monospace;">{{ memo.content }}</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Preview</h5>
+                        <div id="preview" class="border rounded p-3" style="height: 100%; min-height: 500px; overflow-y: auto;">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
