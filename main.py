@@ -1,3 +1,4 @@
+
 import logging
 import os
 from app import app, db
@@ -9,9 +10,9 @@ logging.basicConfig(
 )
 
 # Import models first
-from models import User, Memo
+from app.models import User, Memo
 # Then import routes which use the models
-import routes
+from app import routes
 
 def init_db():
     """Initialize the database and create tables"""
