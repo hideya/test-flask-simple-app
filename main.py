@@ -1,7 +1,7 @@
 
 import logging
 import os
-from app import app, db
+from app.__init__ import app, db
 from app.models import User, Memo
 import app.routes
 
