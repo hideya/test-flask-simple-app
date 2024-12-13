@@ -31,7 +31,7 @@ if __name__ == '__main__':
         
         # Start Flask application
         logging.info("Starting Flask application...")
-        port = int(os.environ.get('PORT', 5000))
+        port = int(os.environ.get('PORT', 5001))
         app.run(host='0.0.0.0', port=port, debug=True)
     except Exception as e:
         logging.error(f"Error starting application: {str(e)}")

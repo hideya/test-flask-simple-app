@@ -36,7 +36,7 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python main.py"
-waitForPort = 5000
+waitForPort = 5001
 
 [[workflows.workflow]]
 name = "Flask Server"
@@ -51,8 +51,8 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python main.py"
-waitForPort = 5000
+waitForPort = 5001
 
 [[ports]]
-localPort = 5000
+localPort = 5001
 externalPort = 80

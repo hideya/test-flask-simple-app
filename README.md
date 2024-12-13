@@ -22,7 +22,7 @@ A secure web application that allows users to create and manage personal memos. 
 ## Setup
 
 1. Click "Run" to start the Flask application
-2. The server will run on port 5000
+2. The server will run on port 5001
 3. Register a new account or login with existing credentials
 4. Start creating and managing your memos
 
