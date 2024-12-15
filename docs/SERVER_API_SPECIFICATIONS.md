@@ -1,9 +1,6 @@
 
 # Server API Specifications
 
-## Base URL
-`http://0.0.0.0:5001`
-
 ## Authentication Endpoints
 
 ### Register
